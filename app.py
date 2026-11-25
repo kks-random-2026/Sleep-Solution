@@ -23,40 +23,52 @@ def sleep_solution(age, sleep):
     else:
         st.success("권장 수면시간을 충족했습니다!")
 
-# 프로그램 화면
+# 프로그램 시작
 st.title("개인별 수면시간 솔루션")
 
-# 반복문
-while True:
+# 결과 표시 상태 저장
+if "result" not in st.session_state:
+    st.session_state.result = False
+
+if "end" not in st.session_state:
+    st.session_state.end = False
+
+if not st.session_state.end:
+
     age = st.number_input(
         "나이를 입력하세요",
         min_value=1,
         max_value=100,
-        step=1,
-        key="age"
+        step=1
     )
 
     sleep = st.number_input(
         "하루 수면시간을 입력하세요",
         min_value=0.0,
         max_value=24.0,
-        step=0.5,
-        key="sleep"
+        step=0.5
     )
 
     if st.button("수면 솔루션 확인"):
+        st.session_state.result = True
+
+    if st.session_state.result:
         sleep_solution(age, sleep)
 
-    tired = st.radio(
-        "아직도 피곤함을 느끼나요?",
-        ["예", "아니오"],
-        key="tired"
-    )
+        tired = st.radio(
+            "아직도 피곤함을 느끼나요?",
+            ["예", "아니오"]
+        )
 
-    if st.button("결과 확인"):
-        if tired == "예":
-            st.info("수면 솔루션을 다시 제공합니다.")
-        else:
-            st.success("건강한 수면 습관을 유지하세요!")
-            st.write("프로그램을 종료합니다.")
-            break
+        if st.button("결과 확인"):
+            if tired == "예":
+                st.session_state.result = False
+                st.info("수면 솔루션을 다시 확인해 주세요.")
+            else:
+                st.session_state.end = True
+                st.session_state.result = False
+                st.success("건강한 수면 습관을 유지하세요!")
+                st.write("프로그램을 종료합니다.")
+
+else:
+    st.success("프로그램이 종료되었습니다.")
